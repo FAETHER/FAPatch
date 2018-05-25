@@ -94,7 +94,9 @@ def main():
 
 	hooks = ['hook_LoadSavedGame.s',
 			 'hook_ArmyGetHandicap.s',
-			 'hook_Walls.s' ]
+			 'hook_Walls.s',
+			 'hook_ExperimentalSelect.s',
+			 'hook_FactoryOverwrite.s']
 			 #,
 			 #'hook_ValidateFocusArmyRequest.s']
 

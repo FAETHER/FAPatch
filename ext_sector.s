@@ -119,7 +119,33 @@ _HOOK_CWldSession__ValidateFocusArmyRequest: ; (int)
 align 0x8
 _HOOK_ArmyGetHandicap: ; (lua_state*)
 	jmp _ArmyGetHandicap_addValidCmdSource
+
+align 0x8	
+_HOOK_ExperimentalSelect:
+	jmp eprLabel
 ; </ Area for hooks>
+
+align 0x4
+eprLabel:
+	push 0xE204B8
+	;lea ecx, ss:[esp+0x50]
+	lea ecx, [ss:esp+0x50]
+	call 0x00405550
+	;mov dword ptr ss:[esp+0x70], 0x1
+	mov dword [ss:esp+0x70],0x1
+	or ebx, 0x2
+	;lea eax,dword ptr ss:[esp+4C]
+	lea eax, [ss:esp+0x4C]
+	mov ecx,esi
+	;mov dword ptr ss:[esp+10],ebx
+	mov dword [ss:esp+0x10],ebx
+	call 0x8B97C0
+	test al,al
+	jne 0x008C062A
+	push 0xE19824
+	lea ecx, [ss:esp+0x50]
+	;lea ecx,dword ptr ss:[esp+50]
+	jmp 0x008C0603
 
 align 0x4
 _ArmyGetHandicap_addValidCmdSource:
