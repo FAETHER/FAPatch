@@ -123,29 +123,51 @@ _HOOK_ArmyGetHandicap: ; (lua_state*)
 align 0x8	
 _HOOK_ExperimentalSelect:
 	jmp eprLabel
+	
+align 0x8
+_HOOK_ValidateQue:
+	jmp QueLabel	
 ; </ Area for hooks>
 
 align 0x4
-eprLabel:
-	push 0xE204B8
-	;lea ecx, ss:[esp+0x50]
-	lea ecx, [ss:esp+0x50]
+QueLabel:
+	push 0xE19824 ; FACTORY
+	jmp 0x0128B03D ; jmp to lea ecx, [ss:esp+0x44]
+	push 0xE204B8 ; EXPERIMENTAL
+	cmp dx, 2
+	jge 0x006EFB0E
+	lea ecx, [ss:esp+0x44]
 	call 0x00405550
-	;mov dword ptr ss:[esp+0x70], 0x1
+	mov byte [ss:esp+0x36C], 0x1
+	mov ebx, 1
+	lea ecx, [ds:edi+0x8]
+	lea eax, [ss:esp+0x40]
+	mov dword [ss:esp+0x18], ebx
+	call 0x0067B050
+	test al, al
+	jne 0x006EFAF8 ; back to start
+	inc dx
+	jmp 0x0128B02E ; jmp to push 0xE204B8
+	
+	
+
+align 0x4
+eprLabel:
+	push 0xE204B8 ; "Experimental" String into stack. 
+	lea ecx, [ss:esp+0x50] ; Some input param, hek knows what. Suspect unit ID
+	call 0x00405550 ; Check if unit is in category
 	mov dword [ss:esp+0x70],0x1
 	or ebx, 0x2
-	;lea eax,dword ptr ss:[esp+4C]
 	lea eax, [ss:esp+0x4C]
 	mov ecx,esi
-	;mov dword ptr ss:[esp+10],ebx
 	mov dword [ss:esp+0x10],ebx
-	call 0x8B97C0
+	call 0x8B97C0 ; Here determine if unit Valid for selection based on Category. 
+	; Result will be in al (first byte), and it can be either 1 or 0. 
 	test al,al
-	jne 0x008C062A
-	push 0xE19824
-	lea ecx, [ss:esp+0x50]
-	;lea ecx,dword ptr ss:[esp+50]
-	jmp 0x008C0603
+	jne 0x008C062A ; Jumps to code that checks for "Selectable" caterogy and then follows through with action...
+	push 0xE19824  ; "Factory" String into stack. 
+	lea ecx, [ss:esp+0x50] ; repeat function call above. 
+	jmp 0x008C0603 ; Jump to code continuation. 
 
 align 0x4
 _ArmyGetHandicap_addValidCmdSource:
