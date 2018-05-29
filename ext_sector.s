@@ -89,8 +89,10 @@ bits 32
 	s_EXPERIMENTAL equ 0xE204B8
 	
 	; Int const
-	c_CannotQueCommandInConstruct equ 0x006EFB0E
-	c_CanQueCommandInConstruct equ 0x006EFAF8
+	
+	; Adress const
+	_CannotQueCommandInConstruct equ 0x006EFB0E
+	_CanQueCommandInConstruct equ 0x006EFAF8
 
 	; c Symbols
 		
@@ -146,7 +148,7 @@ QueLabel:
 	.loop2:
 	push s_EXPERIMENTAL 
 	cmp dx, 2
-	jge c_CannotQueCommandInConstruct
+	jge _CannotQueCommandInConstruct
 	.loop1:
 	lea ecx, [ss:esp+0x44]
 	call _CheckCategory
@@ -157,7 +159,7 @@ QueLabel:
 	mov dword [ss:esp+0x18], ebx
 	call 0x0067B050
 	test al, al
-	jne c_CanQueCommandInConstruct
+	jne _CanQueCommandInConstruct
 	inc dx
 	jmp .loop2 
 	
