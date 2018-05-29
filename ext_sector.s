@@ -83,9 +83,19 @@ bits 32
 	_g_CWldSession equ 0x10A6470
 
 	_g_Sim equ 0x10A63F0
+	
+	; String const
+	s_FACTORY equ 0xE19824
+	s_EXPERIMENTAL equ 0xE204B8
+	
+	; Int const
+	c_CannotQueCommandInConstruct equ 0x006EFB0E
+	c_CanQueCommandInConstruct equ 0x006EFAF8
 
 	; c Symbols
-
+		
+	_CheckCategory equ 	0x00405550
+		
 		; Imports
 		extern _print_hello_world
 		extern _ext_ValidateFocusArmyRequest
@@ -131,13 +141,15 @@ _HOOK_ValidateQue:
 
 align 0x4
 QueLabel:
-	push 0xE19824 ; FACTORY
-	jmp 0x0128B03D ; jmp to lea ecx, [ss:esp+0x44]
-	push 0xE204B8 ; EXPERIMENTAL
+	push s_FACTORY 
+	jmp .loop1 
+	.loop2:
+	push s_EXPERIMENTAL 
 	cmp dx, 2
-	jge 0x006EFB0E
+	jge c_CannotQueCommandInConstruct
+	.loop1:
 	lea ecx, [ss:esp+0x44]
-	call 0x00405550
+	call _CheckCategory
 	mov byte [ss:esp+0x36C], 0x1
 	mov ebx, 1
 	lea ecx, [ds:edi+0x8]
@@ -145,17 +157,17 @@ QueLabel:
 	mov dword [ss:esp+0x18], ebx
 	call 0x0067B050
 	test al, al
-	jne 0x006EFAF8 ; back to start
+	jne c_CanQueCommandInConstruct
 	inc dx
-	jmp 0x0128B02E ; jmp to push 0xE204B8
+	jmp .loop2 
 	
 	
 
 align 0x4
 eprLabel:
-	push 0xE204B8 ; "Experimental" String into stack. 
+	push s_EXPERIMENTAL  
 	lea ecx, [ss:esp+0x50] ; Some input param, hek knows what. Suspect unit ID
-	call 0x00405550 ; Check if unit is in category
+	call _CheckCategory 
 	mov dword [ss:esp+0x70],0x1
 	or ebx, 0x2
 	lea eax, [ss:esp+0x4C]
@@ -165,7 +177,7 @@ eprLabel:
 	; Result will be in al (first byte), and it can be either 1 or 0. 
 	test al,al
 	jne 0x008C062A ; Jumps to code that checks for "Selectable" caterogy and then follows through with action...
-	push 0xE19824  ; "Factory" String into stack. 
+	push s_FACTORY  
 	lea ecx, [ss:esp+0x50] ; repeat function call above. 
 	jmp 0x008C0603 ; Jump to code continuation. 
 
