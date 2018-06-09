@@ -93,6 +93,7 @@ bits 32
 	; Adress const
 	_CannotQueCommandInConstruct equ 0x006EFB0E
 	_CanQueCommandInConstruct equ 0x006EFAF8
+	_EndCalculateNoRushTimerVariable equ 0x006FF3D6
 
 	; c Symbols
 		
@@ -139,7 +140,38 @@ _HOOK_ExperimentalSelect:
 align 0x8
 _HOOK_ValidateQue:
 	jmp QueLabel	
+	
+align 0x8
+_HOOK_CalculateNoRushTimerVariable:
+	jmp TimerLabel		
 ; </ Area for hooks>
+
+align 0x4
+TimerLabel:
+	sub ecx,esi
+	push ecx
+	push eax
+	pushad 
+	mov esi,0
+	mov ebx,0
+	TimerLoop:
+	push eax
+	mov eax,0xA
+	mul bx
+	mov ebx,eax
+	pop eax
+	mov edx, [ds:eax+esi]
+	sub edx,0x30
+	add bl,dl
+	inc esi
+	loop TimerLoop
+	mov eax,0x258
+	mul bx
+	mov dword [ss:ebp+0x1CC],eax
+	popad 
+	lea ecx, [ss:esp+0x70]
+	jmp _EndCalculateNoRushTimerVariable
+
 
 align 0x4
 QueLabel:

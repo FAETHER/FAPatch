@@ -1,3 +1,5 @@
 ForgedAlliance_base.exe
+ForgedAlliance_ext.exe
 nasm.exe
 build/
+patch.bat
