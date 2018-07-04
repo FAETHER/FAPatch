@@ -1,6 +1,8 @@
 
 #include "moho.h"
 
+const char* sCQUEMOV = "CQUEMOV";
+
 extern "C" 
 {
 	void Logf(const char* fmt, ...);

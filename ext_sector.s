@@ -93,6 +93,7 @@ bits 32
 	; Adress const
 	_CannotQueCommandInConstruct equ 0x006EFB0E
 	_CanQueCommandInConstruct equ 0x006EFAF8
+	_NeitherInCategoryInConstruct equ 0x006EFACE
 	_EndCalculateNoRushTimerVariable equ 0x006FF3D6
 
 	; c Symbols
@@ -104,6 +105,8 @@ bits 32
 		extern _ext_ValidateFocusArmyRequest
 		extern _cxx_AddCommandSourceId
 		extern _cxx_SetCommandSourceId
+		extern _sCQUEMOV
+		
 
 	global _stricmp
 
@@ -178,9 +181,14 @@ QueLabel:
 	push s_FACTORY 
 	jmp .loop1 
 	.loop2:
-	push s_EXPERIMENTAL 
-	cmp dx, 2
-	jge _CannotQueCommandInConstruct
+	push dword [ss:_sCQUEMOV]
+	mov edx, [ss:esp-0x80]
+	mov ecx, [ss:esp]
+	mov edx, [ss:edx]
+	mov ecx, [ss:ecx]
+	cmp edx, ecx
+	je _NeitherInCategoryInConstruct
+	mov dword [ss:esp+0x20], eax
 	.loop1:
 	lea ecx, [ss:esp+0x44]
 	call _CheckCategory
@@ -192,14 +200,11 @@ QueLabel:
 	call 0x0067B050
 	test al, al
 	jne _CanQueCommandInConstruct
-	inc dx
-	jmp .loop2 
-	
-	
+	jmp .loop2
 
 align 0x4
 eprLabel:
-	push s_EXPERIMENTAL  
+	push dword [ss:_sCQUEMOV] 
 	lea ecx, [ss:esp+0x50] ; Some input param, hek knows what. Suspect unit ID
 	call _CheckCategory 
 	mov dword [ss:esp+0x70],0x1
