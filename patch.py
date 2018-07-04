@@ -94,7 +94,10 @@ def main():
 
 	hooks = ['hook_LoadSavedGame.s',
 			 'hook_ArmyGetHandicap.s',
-			 'hook_Walls.s' ]
+			 'hook_Walls.s',
+			 'hook_OnMotionTurnEvent.s',
+			 'hook_OnMotionTurnEvent2.s',
+			 'hook_OnMotionTurnEvent3.s']
 			 #,
 			 #'hook_ValidateFocusArmyRequest.s']
 
