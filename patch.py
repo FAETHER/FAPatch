@@ -98,7 +98,10 @@ def main():
 			 'hook_ExperimentalSelect.s',
 			 'hook_ValidateQue.s',
 			 'hook_NoRush.s',
-			 'hook_STAYONWATSUR_.s']
+			 'hook_STAYONWATSUR_.s',
+			 'hook_OnMotionTurnEvent.s',
+ 			 'hook_OnMotionTurnEvent2.s',
+ 			 'hook_OnMotionTurnEvent3.s']
 			 #,
 			 #'hook_ValidateFocusArmyRequest.s']
 
