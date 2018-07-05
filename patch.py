@@ -97,7 +97,8 @@ def main():
 			 'hook_Walls.s',
 			 'hook_ExperimentalSelect.s',
 			 'hook_ValidateQue.s',
-			 'hook_NoRush.s']
+			 'hook_NoRush.s',
+			 'hook_STAYONWATSUR_.s']
 			 #,
 			 #'hook_ValidateFocusArmyRequest.s']
 

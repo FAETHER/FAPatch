@@ -2,6 +2,7 @@
 #include "moho.h"
 
 const char* sCQUEMOV = "CQUEMOV";
+const char* sSTAYONWATSUR = "STAYONWATSUR";
 
 extern "C" 
 {

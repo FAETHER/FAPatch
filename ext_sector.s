@@ -99,6 +99,10 @@ bits 32
 	; c Symbols
 		
 	_CheckCategory equ 	0x00405550
+	_CheckCategory_sub_func equ 0x004059E0
+	_GetCatCmpResult equ 0x0067B050
+	_exit_STAYONWATSUR_check equ 0x0062ADEE
+	_exit_STAYONWATSUR_NoMatch equ 0x0062ADEC
 		
 		; Imports
 		extern _print_hello_world
@@ -106,6 +110,7 @@ bits 32
 		extern _cxx_AddCommandSourceId
 		extern _cxx_SetCommandSourceId
 		extern _sCQUEMOV
+		extern _sSTAYONWATSUR
 		
 
 	global _stricmp
@@ -146,8 +151,55 @@ _HOOK_ValidateQue:
 	
 align 0x8
 _HOOK_CalculateNoRushTimerVariable:
-	jmp TimerLabel		
+	jmp TimerLabel	
+
+align 0x8
+_HOOK_STAYONWATSUR_cat:
+	jmp STAYONWATSUR_check		
 ; </ Area for hooks>
+
+align 0x4
+STAYONWATSUR_check:
+	push s_EXPERIMENTAL
+	jmp .l1
+	.l2:
+	push 0xC ; cat length
+	push dword [ss:_sSTAYONWATSUR]
+	mov edi, [ss:esp-0x7C] ;stack based comparison for categories 
+	mov edx, [ss:esp]
+	mov edi, [ss:edi]
+	mov edx, [ss:edx]
+	cmp edx,edi
+	je _exit_STAYONWATSUR_NoMatch
+	xor edi,edi
+	xor edx,edx
+	.l1:
+	lea ecx,  [ss:esp+0x20]
+	mov dword [ss:esp+0x1C],eax
+	mov dword [ss:esp+0x38],0xF
+	mov dword [ss:esp+0x34],edi
+	mov byte  [ss:esp+0x24],0x0
+	call _CheckCategory_sub_func
+	lea eax,[ss:esp+0x18]
+	mov ecx,ebp
+	mov dword [ss:esp+0x58],edi
+	call _GetCatCmpResult
+	mov dword [ss:esp+0x58],0xFFFFFFFF
+	cmp dword [ss:esp+0x30],0x10
+	mov byte  [ss:esp+0x60],al
+	test al,al
+	je .l2
+	mov ecx, [ss:esp+0x14] ;test for layers just in case...
+	mov eax, [ss:esp+0x64]
+	test eax,ecx
+	jne _exit_STAYONWATSUR_check
+	cmp cx,0x8
+	jge _exit_STAYONWATSUR_check
+	cmp eax,0x0
+	je _exit_STAYONWATSUR_check
+	cmp eax,ecx
+	je _exit_STAYONWATSUR_check
+	jmp .l2
 
 align 0x4
 TimerLabel:
@@ -197,7 +249,7 @@ QueLabel:
 	lea ecx, [ds:edi+0x8]
 	lea eax, [ss:esp+0x40]
 	mov dword [ss:esp+0x18], ebx
-	call 0x0067B050
+	call _GetCatCmpResult
 	test al, al
 	jne _CanQueCommandInConstruct
 	jmp .loop2
