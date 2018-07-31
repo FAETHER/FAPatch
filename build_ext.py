@@ -38,7 +38,7 @@ def gcc_compile(filename, filename_out, defines = {}):
 	call(['g++','-I.','-m32']+ cxxflags +['-c', filename,'-o', filename_out])
 
 def gcc_link(filenames, filename_out):
-	print('Linking...')
+	print('Linking... %s' %filenames)
 	ldflags = []
 	#call(['g++','-shared','-static',
 	#	  '-Wl,-T,linker.ld,-m,i386pe'] + ldflags \

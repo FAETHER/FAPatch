@@ -2,7 +2,7 @@
 bits 32
 
 
-_STAYONWATSUR_entry equ 0x0128B035
+_STAYONWATSUR_entry equ 0x0128B030
 _end_SOWS equ 0x0062AE25
 
 org 0x0062ADD3

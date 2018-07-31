@@ -122,6 +122,7 @@ def main():
 		call(['python','build_ext.py'])
 		with open('build/ext_sector.bin','rb') as f:
 			size = os.fstat(f.fileno()).st_size
+			print(size)
 			if size > 0x1500:
 				raise RuntimeError('C compiled sector size too big.')
 			else:
